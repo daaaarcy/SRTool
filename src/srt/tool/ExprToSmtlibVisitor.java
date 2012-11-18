@@ -85,7 +85,7 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
 
 	@Override
 	public String visit(DeclRef declRef) {
-		return null;
+		return declRef.getName();
 	}
 
 	@Override
