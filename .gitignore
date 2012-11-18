@@ -8,7 +8,6 @@
 *.so
 *.c
 *.token
-bin/*
 
 # Packages #
 ############
@@ -39,3 +38,10 @@ bin/*
 Icon?
 ehthumbs.db
 Thumbs.db
+
+# File system #
+###############
+bin/*
+.idea/*
+*.txt
+*.iml
