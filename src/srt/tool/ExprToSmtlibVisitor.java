@@ -75,12 +75,7 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
 
 	@Override
 	public String visit(IntLiteral intLiteral) {
-		String bin = Integer.toBinaryString(intLiteral.getValue());
-		String padding = "";
-		for(int i = 32; i>bin.length(); i--){
-			padding = padding + "0";
-		}
-		return "#b" + padding + Integer.toBinaryString(intLiteral.getValue());
+		return "(_ bv" + intLiteral.getValue() + " 32)";
 	}
 
 	@Override
