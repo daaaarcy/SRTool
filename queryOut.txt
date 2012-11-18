@@ -1,3 +1,0 @@
-(error "line 8 column 20: invalid function application, sort mismatch on argument at position 2")
-(error "line 10 column 10: invalid function application, sort mismatch on argument at position 1")
-sat
