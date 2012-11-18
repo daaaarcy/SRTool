@@ -25,12 +25,31 @@ public class SMTLIBConverter {
 
 		// TODO: Declare variables, add constraints, add properties to check
 		// here.
-
+		for(String varname : variableNames){
+			String entry 
+				= "(declare-fun "+ varname +" () (_ BitVec 32))\n";
+			query = query.append(entry);
+		}
+		
+		for(Expr trans : transitionExprs){
+			query = query.append("(assert " + exprConverter.visit(trans) + ")\n");
+		}
+		
+		if(!propertyExprs.isEmpty()){
+		
+			query.append("(assert \n");
+			StringBuilder end = new StringBuilder();
+			for(Expr prop : propertyExprs){
+				query = query.append("(or (not " + exprConverter.visit(prop) + ")\n");
+				end.append(")");
+			}
+			query.append(end + ")\n");
+		}
 		
 		query.append("(check-sat)\n");
 		
 	}
-
+	
 	public String getQuery() {
 		return query.toString();
 	}
