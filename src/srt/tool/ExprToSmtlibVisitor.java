@@ -23,8 +23,10 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
 				operator = "(bvadd %s %s)";
 				break;
 			case BinaryExpr.BAND:
+				operator = "(bvand %s %s)";
 				break;
 			case BinaryExpr.BOR:
+				operator = "(bvor %s %s)";
 				break;
 			case BinaryExpr.BXOR:
 				break;
