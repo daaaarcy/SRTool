@@ -23,46 +23,61 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
 				operator = "(bvadd %s %s)";
 				break;
 			case BinaryExpr.BAND:
+				operator = "(bvand %s %s)";
 				break;
 			case BinaryExpr.BOR:
+				operator = "(bvor %s %s)";
 				break;
-			case BinaryExpr.BXOR:
+            case BinaryExpr.BXOR:
+                operator = "(bvxor %s %s)";
 				break;
 			case BinaryExpr.DIVIDE:
+                operator = "(bvsdiv %s %s)";
 				break;
 			case BinaryExpr.LSHIFT:
+                operator = "(bvshl %s %s)";
 				break;
 			case BinaryExpr.MOD:
+                operator = "(bvsmod %s %s)";
 				break;
 			case BinaryExpr.MULTIPLY:
+                operator = "(bvmul %s %s)";
 				break;
 			case BinaryExpr.RSHIFT:
+                operator = "(bvashr %s %s)";
 				break;
-			case BinaryExpr.SUBTRACT:
+            case BinaryExpr.SUBTRACT:
+                operator = "(bvsub %s %s)";
 				break;
 				
 			case BinaryExpr.LAND:
+                operator = "(bvand %s %s)";
 				break;
 			case BinaryExpr.LOR:
+                operator = "(bvor %s %s)";
 				break;
 			
 			case BinaryExpr.GEQ:
+                operator = "(bvsge %s %s)";
 				break;
-			case BinaryExpr.GT:
-				break;
-			case BinaryExpr.LEQ:
-				break;
-			case BinaryExpr.LT:
-				break;
-			case BinaryExpr.NEQUAL:
-				break;
-			case BinaryExpr.EQUAL:
-				operator = "(= %s %s)";
+            case BinaryExpr.GT:
+                operator = "(bvsgt %s %s)";
+                break;
+            case BinaryExpr.LEQ:
+                operator = "(bvsle %s %s)";
+                break;
+            case BinaryExpr.LT:
+                operator = "(bvslt %s %s)";
+                break;
+            case BinaryExpr.NEQUAL:
+                operator = "(bvnot (bvcomp %s %s))";
+                break;
+            case BinaryExpr.EQUAL:
+                operator = "(bvcomp %s %s)";
 				break;
 			default:
 				throw new IllegalArgumentException("Invalid binary operator");
 		}
-		
 		
 		return String.format(operator, visit(expr.getLhs()), visit(expr.getRhs()));
 		
@@ -70,12 +85,13 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
 
 	@Override
 	public String visit(DeclRef declRef) {
-		return declRef.getName();
+		return null;
 	}
 
 	@Override
 	public String visit(IntLiteral intLiteral) {
 		return "(_ bv" + intLiteral.getValue() + " 32)";
+
 	}
 
 	@Override
