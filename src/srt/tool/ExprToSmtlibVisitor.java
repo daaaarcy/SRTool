@@ -16,7 +16,7 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
 
 	@Override
 	public String visit(BinaryExpr expr) {
-		String operator = null;
+		String operator;
 		switch(expr.getOperator())
 		{
 			case BinaryExpr.ADD:
@@ -70,10 +70,10 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
                 operator = "(bvslt %s %s)";
                 break;
             case BinaryExpr.NEQUAL:
-                operator = "(bvnot (bvcomp %s %s))";
+                operator = "(not (= %s %s))";
                 break;
             case BinaryExpr.EQUAL:
-                operator = "(bvcomp %s %s)";
+                operator = "(= %s %s)";
 				break;
 			default:
 				throw new IllegalArgumentException("Invalid binary operator");
