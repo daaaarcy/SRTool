@@ -8,8 +8,12 @@
 *.so
 *.c
 *.token
+<<<<<<< HEAD
 bin/*
 query*
+=======
+
+>>>>>>> 85f0b9e1f8de80db345b96fa8adf9fc995168fee
 # Packages #
 ############
 # it's better to unpack these files and commit the raw source
@@ -39,3 +43,10 @@ query*
 Icon?
 ehthumbs.db
 Thumbs.db
+
+# File system #
+###############
+bin/*
+.idea/*
+*.txt
+*.iml
