@@ -10,6 +10,9 @@ import srt.ast.visitor.impl.DefaultVisitor;
 
 public class ExprToSmtlibVisitor extends DefaultVisitor {
 	
+	public boolean assertStat = false;
+	private static String True = "(_ bv1 32)";
+	
 	public ExprToSmtlibVisitor() {
 		super(false);
 	}
@@ -73,19 +76,30 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
                 operator = "(bvnot (bvcomp %s %s))";
                 break;
             case BinaryExpr.EQUAL:
-                operator = "(bvcomp %s %s)";
+            	if(!assertStat){
+            		operator = "(tobv32 (= %s %s))";
+            	}else{
+                	operator = "(= %s %s)";
+            	}
 				break;
 			default:
 				throw new IllegalArgumentException("Invalid binary operator");
 		}
-		
+		assertStat = false;
 		return String.format(operator, visit(expr.getLhs()), visit(expr.getRhs()));
 		
 	}
 
+	public void branched(){
+		assertStat = true;
+	}
+	
 	@Override
 	public String visit(DeclRef declRef) {
-		return declRef.getName();
+		return !assertStat?
+				declRef.getName()
+				:"(= " + declRef.getName() +
+					" " + True + " )";
 	}
 
 	@Override

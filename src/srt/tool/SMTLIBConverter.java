@@ -32,6 +32,7 @@ public class SMTLIBConverter {
 		}
 		
 		for(Expr trans : transitionExprs){
+			exprConverter.branched();
 			query = query.append("(assert " + exprConverter.visit(trans) + ")\n");
 		}
 		
@@ -40,7 +41,10 @@ public class SMTLIBConverter {
 			query.append("(assert \n");
 			StringBuilder end = new StringBuilder();
 			for(Expr prop : propertyExprs){
-				query = query.append("(or (not " + exprConverter.visit(prop) + ")\n");
+				exprConverter.branched();
+				query = query.append("(or ( not " 
+						+ exprConverter.visit(prop) 
+						+ ")\n");
 				end.append(")");
 			}
 			query.append(end + ")\n");
