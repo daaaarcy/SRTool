@@ -10,6 +10,7 @@ public class SMTLIBConverter {
 	
 	private ExprToSmtlibVisitor exprConverter;
 	private StringBuilder query;
+	private List<String> assertVars = new ArrayList<String>();
 	
 	public SMTLIBConverter(Set<String> variableNames, List<Expr> transitionExprs, List<Expr> propertyExprs) {
 		
@@ -30,6 +31,12 @@ public class SMTLIBConverter {
 				= "(declare-fun "+ varname +" () (_ BitVec 32))\n";
 			query = query.append(entry);
 		}
+
+		for(int i = 0; i < propertyExprs.size(); i++) {
+			String assertVar = "prop" + i;
+			query = query.append("(declare-fun "+ assertVar +" () (Bool))\n");
+			assertVars.add(assertVar);
+		}
 		
 		for(Expr trans : transitionExprs){
 			exprConverter.branched();
@@ -37,20 +44,29 @@ public class SMTLIBConverter {
 		}
 		
 		if(!propertyExprs.isEmpty()){
-		
-			query.append("(assert \n");
-			StringBuilder end = new StringBuilder();
-			for(Expr prop : propertyExprs){
+			for(int i = 0; i < propertyExprs.size(); i++) {
 				exprConverter.branched();
-				query = query.append("(or ( not " 
-						+ exprConverter.visit(prop) 
-						+ ")\n");
+				query = query.append("(assert (= " + assertVars.get(i) +
+						" (not " + exprConverter.visit(propertyExprs.get(i)) + ")))\n");			
+			}
+			
+			query.append("(assert");
+			StringBuilder end = new StringBuilder();
+			for(int i = 0; i < propertyExprs.size(); i++) {
+				exprConverter.branched();
+				query = query.append(" (or " + assertVars.get(i));
 				end.append(")");
 			}
 			query.append(end + ")\n");
 		}
 		
 		query.append("(check-sat)\n");
+		
+		query.append("(get-value ( ");
+		for(int i = 0; i < propertyExprs.size(); i++) {
+			query.append(assertVars.get(i) + " ");
+		}
+		query.append("))\n");
 		
 	}
 	
@@ -60,6 +76,13 @@ public class SMTLIBConverter {
 	
 	public List<Integer> getPropertiesThatFailed(String queryResult) {
 		List<Integer> res = new ArrayList<Integer>();
+		
+		String results[] = queryResult.split("\n");
+		for (String result : results) {
+			if (result.contains("true")) {
+				res.add(Integer.parseInt(result.substring(6, result.indexOf("true") - 1)));
+			}
+		}
 		
 		return res;
 	}
