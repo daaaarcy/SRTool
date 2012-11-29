@@ -122,6 +122,7 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
 		String cond = visit(ternaryExpr.getCondition());
 		String trueExpr = visit(ternaryExpr.getTrueExpr());
 		String falseExpr = visit(ternaryExpr.getFalseExpr());
+		assertStat = false;
 		return "(ite " + cond +
 				" " + trueExpr +
 				" " + falseExpr + ")";
@@ -139,7 +140,11 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
 			operator = "%s";
 			break;
 		case UnaryExpr.LNOT:
-			operator = "(not %s)";
+			if(!assertStat){
+				operator = "("+ QueryUtil.BVLNot +" %s)";
+			}else{
+				operator = "(not %s)";
+			}
 			break;
 		case UnaryExpr.BNOT:
 			operator = "(bvnot %s)";
@@ -147,7 +152,7 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
 		default:
 			throw new IllegalArgumentException("Invalid binary operator");
 		}
-		
+		assertStat = false;
 		return String.format(operator, visit(unaryExpr.getOperand()));
 	}
 	

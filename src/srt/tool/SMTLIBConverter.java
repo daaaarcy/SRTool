@@ -92,6 +92,7 @@ public class SMTLIBConverter {
 		
 		//adding definitions
 		query = query.append(QueryUtil.DefineTobv32);
+		query = query.append(QueryUtil.DefineBVLNot);
 		
 		return query;
 				
