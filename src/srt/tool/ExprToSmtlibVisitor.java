@@ -57,11 +57,13 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
 				
 			case BinaryExpr.LAND:
 				logicop = true;
-                operator = "(and %s %s)";
+                operator = "(and ("+ QueryUtil.ToLogic +" %s)"
+                		 + "(" + QueryUtil.ToLogic + " %s))";
 				break;
 			case BinaryExpr.LOR:
 				logicop = true;
-                operator = "(or %s %s)";
+                operator = "(or ("+ QueryUtil.ToLogic +" %s)"
+                		 + "(" + QueryUtil.ToLogic + " %s))";
 				break;
 			
 			case BinaryExpr.GEQ:
