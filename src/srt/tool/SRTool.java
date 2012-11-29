@@ -56,7 +56,7 @@ public class SRTool {
 			p = (Program) new LoopUnwinderVisitor(clArgs.unwindingAssertions,
 					clArgs.unwindDepth).visit(p);
 		}
-		p = (Program) new PredicationVisitor().visit(p);
+	//	p = (Program) new PredicationVisitor().visit(p);
 		//p = (Program) new SSAVisitor().visit(p);
 
 		// Output the program as text after being transformed (for debugging).

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import srt.ast.Expr;
+import srt.util.QueryUtil;
 
 public class SMTLIBConverter {
 	
@@ -20,10 +21,8 @@ public class SMTLIBConverter {
 		}
 		
 		exprConverter = new ExprToSmtlibVisitor();
-		query = new StringBuilder("(set-logic QF_BV)\n" +
-				"(define-fun tobv32 ((p Bool)) (_ BitVec 32) (ite p (_ bv1 32) (_ bv0 32)))\n");
-		// TODO: Define more functions above (for convenience), as needed.
-
+		query = querySetUp();
+		
 		// TODO: Declare variables, add constraints, add properties to check
 		// here.
 		for(String varname : variableNames){
@@ -85,6 +84,17 @@ public class SMTLIBConverter {
 		}
 		
 		return res;
+	}
+	
+	public StringBuilder querySetUp(){
+		
+		StringBuilder query = new StringBuilder(QueryUtil.SetLogicQF_BV);
+		
+		//adding definitions
+		query = query.append(QueryUtil.DefineTobv32);
+		
+		return query;
+				
 	}
 	
 }

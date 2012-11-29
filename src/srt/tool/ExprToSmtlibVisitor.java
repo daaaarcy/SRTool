@@ -1,6 +1,7 @@
 package srt.tool;
 
 import srt.ast.BinaryExpr;
+import srt.util.QueryUtil;
 import srt.ast.DeclRef;
 import srt.ast.Expr;
 import srt.ast.IntLiteral;
@@ -11,7 +12,7 @@ import srt.ast.visitor.impl.DefaultVisitor;
 public class ExprToSmtlibVisitor extends DefaultVisitor {
 	
 	public boolean assertStat = false;
-	private static String True = "(_ bv1 32)";
+	
 	
 	public ExprToSmtlibVisitor() {
 		super(false);
@@ -20,6 +21,7 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
 	@Override
 	public String visit(BinaryExpr expr) {
 		String operator;
+		boolean logicop = false;
 		switch(expr.getOperator())
 		{
 			case BinaryExpr.ADD:
@@ -54,36 +56,43 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
 				break;
 				
 			case BinaryExpr.LAND:
+				logicop = true;
                 operator = "(and %s %s)";
 				break;
 			case BinaryExpr.LOR:
+				logicop = true;
                 operator = "(or %s %s)";
 				break;
 			
 			case BinaryExpr.GEQ:
+				logicop = true;
                 operator = "(bvsge %s %s)";
 				break;
             case BinaryExpr.GT:
+            	logicop = true;
                 operator = "(bvsgt %s %s)";
                 break;
             case BinaryExpr.LEQ:
+            	logicop = true;
                 operator = "(bvsle %s %s)";
                 break;
             case BinaryExpr.LT:
+            	logicop = true;
                 operator = "(bvslt %s %s)";
                 break;
             case BinaryExpr.NEQUAL:
+            	logicop = true;
                 operator = "(not (= %s %s))";
                 break;
             case BinaryExpr.EQUAL:
-            	if(!assertStat){
-            		operator = "(tobv32 (= %s %s))";
-            	}else{
-                	operator = "(= %s %s)";
-            	}
+            	logicop = true;
+              	operator = "(= %s %s)";
 				break;
 			default:
 				throw new IllegalArgumentException("Invalid binary operator");
+		}
+		if(!assertStat && logicop){
+			operator = "(" + QueryUtil.tobv32 + operator + ")";
 		}
 		assertStat = false;
 		return String.format(operator, visit(expr.getLhs()), visit(expr.getRhs()));
@@ -99,7 +108,7 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
 		return !assertStat?
 				declRef.getName()
 				:"(= " + declRef.getName() +
-					" " + True + " )";
+					" " + QueryUtil.TRUE + " )";
 	}
 
 	@Override
