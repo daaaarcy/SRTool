@@ -24,8 +24,10 @@ public abstract class QueryUtil {
 	public static String tolog(String bv){
 		return " (tolog " + bv + ") ";
 	}	
+	//------------------------------------------------------------
+	
 	//convenient macros
-	public static String TRUE = "(_ bv1 32)";
+	public static String TRUE = "(_ bv1 32)"; 
 	
 	
 
