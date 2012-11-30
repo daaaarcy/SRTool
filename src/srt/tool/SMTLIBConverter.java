@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import srt.ast.Expr;
-import srt.util.QueryUtil;
+import static srt.util.QueryUtil.*;
 
 public class SMTLIBConverter {
 
@@ -13,6 +13,11 @@ public class SMTLIBConverter {
     private StringBuilder query;
     private List<String> assertVars = new ArrayList<String>();
 
+    /*
+     * NOTE: Some methods in here come from QueryUtil
+     * from the srt.util package 
+     */
+    
     public SMTLIBConverter(Set<String> variableNames,
             List<Expr> transitionExprs, List<Expr> propertyExprs) {
 
@@ -24,13 +29,12 @@ public class SMTLIBConverter {
         query = querySetUp();
 
         for (String varname : variableNames) {
-            String entry = "(declare-fun " + varname + " () (_ BitVec 32))\n";
-            query = query.append(entry);
+            query = query.append(declare(varname, "(_ BitVec 32)"));
         }
 
         for (int i = 0; i < propertyExprs.size(); i++) {
             String assertVar = "prop" + i;
-            query = query.append("(declare-fun " + assertVar + " () (Bool))\n");
+            query = query.append(declare(assertVar, "(Bool)"));
             assertVars.add(assertVar);
         }
 
@@ -40,6 +44,7 @@ public class SMTLIBConverter {
                     + ")\n");
         }
 
+        // sets propI variables to negated assertions of the simple c prog
         if (!propertyExprs.isEmpty()) {
             for (int i = 0; i < propertyExprs.size(); i++) {
                 exprConverter.branched();
@@ -48,6 +53,10 @@ public class SMTLIBConverter {
                         + ")))\n");
             }
 
+            /*
+             * adds the assertion to check if any the above propI can be
+             * satisfied.
+             */
             query.append("(assert");
             StringBuilder end = new StringBuilder();
             for (int i = 0; i < propertyExprs.size(); i++) {
@@ -58,8 +67,13 @@ public class SMTLIBConverter {
             query.append(end + ")\n");
         }
 
+        /*
+         * Checks the above assertions. If sat. then the prog has failed its
+         * verification, else it passed
+         */
         query.append("(check-sat)\n");
 
+        // To find out which propI values are sat/unsat - for those that failed
         query.append("(get-value ( ");
         for (int i = 0; i < propertyExprs.size(); i++) {
             query.append(assertVars.get(i) + " ");
@@ -86,17 +100,17 @@ public class SMTLIBConverter {
         return res;
     }
 
-    public StringBuilder querySetUp() {
-
-        StringBuilder query = new StringBuilder(QueryUtil.SetLogicQF_BV);
+    private StringBuilder querySetUp() {
+        // adding settings
+        StringBuilder query = new StringBuilder(SetLogicQF_BV);
 
         // adding definitions
-        query = query.append(QueryUtil.DefineTobv32);
-        query = query.append(QueryUtil.DefineBVLNot);
-        query = query.append(QueryUtil.DefineToBool);
+        query = query.append(DefineTobv32);
+        query = query.append(DefineBVLNot);
+        query = query.append(DefineToBool);
 
         return query;
 
     }
-
+    
 }
