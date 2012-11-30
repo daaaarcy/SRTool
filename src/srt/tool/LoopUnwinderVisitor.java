@@ -26,6 +26,8 @@ public class LoopUnwinderVisitor extends DefaultVisitor {
         final int unwindBound = bound != null ? bound.getValue()
                 : defaultUnwindBound;
 
+        // If no more unwinding is required, either assume or assert the negated
+        // loop condition based on the global settings.
         if (unwindBound == 0) {
             ArrayList<Stmt> truncStmts = new ArrayList<Stmt>();
 
@@ -40,10 +42,14 @@ public class LoopUnwinderVisitor extends DefaultVisitor {
             return new BlockStmt(truncStmts);
         }
 
+        // Define a new while statement with the same properties as the previous
+        // statement except with an unwind bound that is smaller by one. 
         final WhileStmt nextWhileStmt = new WhileStmt(condition,
                 new IntLiteral(unwindBound - 1), whileStmt.getInvariantList(),
                 body);
 
+        // Visit the new while loop recursively and return a while statement
+        // unwound the given number of times.
         final Stmt[] unwindStmts = new Stmt[] { body,
                 (Stmt) visit(nextWhileStmt) };
         return new IfStmt(condition, new BlockStmt(unwindStmts),
