@@ -14,43 +14,38 @@ import srt.ast.Node;
 import srt.ast.visitor.impl.DefaultVisitor;
 
 public class CollectConstraintsVisitor extends DefaultVisitor {
-	
-	public Set<String> variableNames = new HashSet<String>();
-	
-	public List<Node> transitionNodes = new ArrayList<Node>();
-	public List<Expr> transitionExprs = new ArrayList<Expr>();
-	
-	public List<Node> propertyNodes = new ArrayList<Node>();
-	public List<Expr> propertyExprs = new ArrayList<Expr>();
-	
-	
-	public CollectConstraintsVisitor() {
-		super(false);
-	}
-	
-	@Override
-	public Object visit(DeclRef declRef) {
-		variableNames.add(declRef.getName());
-		return super.visit(declRef);
-	}
 
-	@Override
-	public Object visit(AssertStmt assertStmt) {
-		propertyNodes.add(assertStmt);
-		propertyExprs.add(assertStmt.getCondition());
-		return super.visit(assertStmt);
-	}
+    public Set<String> variableNames = new HashSet<String>();
 
-	@Override
-	public Object visit(AssignStmt assignment) {
-		transitionNodes.add(assignment);
-		transitionExprs.add(new BinaryExpr(BinaryExpr.EQUAL, assignment
-				.getLhs(), assignment.getRhs(), assignment));
-		return super.visit(assignment);
-	}
-	
+    public List<Node> transitionNodes = new ArrayList<Node>();
+    public List<Expr> transitionExprs = new ArrayList<Expr>();
+
+    public List<Node> propertyNodes = new ArrayList<Node>();
+    public List<Expr> propertyExprs = new ArrayList<Expr>();
+
+    public CollectConstraintsVisitor() {
+        super(false);
+    }
+
+    @Override
+    public Object visit(DeclRef declRef) {
+        variableNames.add(declRef.getName());
+        return super.visit(declRef);
+    }
+
+    @Override
+    public Object visit(AssertStmt assertStmt) {
+        propertyNodes.add(assertStmt);
+        propertyExprs.add(assertStmt.getCondition());
+        return super.visit(assertStmt);
+    }
+
+    @Override
+    public Object visit(AssignStmt assignment) {
+        transitionNodes.add(assignment);
+        transitionExprs.add(new BinaryExpr(BinaryExpr.EQUAL, assignment
+                .getLhs(), assignment.getRhs(), assignment));
+        return super.visit(assignment);
+    }
+
 }
-
-
-
-
