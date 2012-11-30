@@ -121,13 +121,16 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
 
 	@Override
 	public String visit(TernaryExpr ternaryExpr) {
+		boolean oldAssertStat = assertStat;
+		assertStat = true;
 		String cond = visit(ternaryExpr.getCondition());
+		assertStat = false;
 		String trueExpr = visit(ternaryExpr.getTrueExpr());
 		String falseExpr = visit(ternaryExpr.getFalseExpr());
-		assertStat = false;
-		return "(ite " + cond +
+		String result = "(ite " + cond +
 				" " + trueExpr +
-				" " + falseExpr + ")";
+				" " + falseExpr + ")"; 
+		return oldAssertStat? "("+ QueryUtil.ToLogic + " " + result +")" :result;
 	}
 
 	@Override
