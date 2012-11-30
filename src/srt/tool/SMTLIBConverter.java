@@ -23,8 +23,6 @@ public class SMTLIBConverter {
         exprConverter = new ExprToSmtlibVisitor();
         query = querySetUp();
 
-        // TODO: Declare variables, add constraints, add properties to check
-        // here.
         for (String varname : variableNames) {
             String entry = "(declare-fun " + varname + " () (_ BitVec 32))\n";
             query = query.append(entry);

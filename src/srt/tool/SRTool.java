@@ -48,14 +48,20 @@ public class SRTool {
             throw new CheckerExpception(checker.getCheckerError());
         }
 
-        // TODO: Transform program using Visitors here.
+        // Transform the code using the appropriate visitors as per the user's
+        // settings.
         if (clArgs.abstractLoops) {
+            // Replace all loops in the program with summarisations.
             p = (Program) new LoopAbstractionVisitor().visit(p);
         } else {
+            // Unwind all loops in the program to the specified depth and
+            // whether or not to use an unwinding assertion.
             p = (Program) new LoopUnwinderVisitor(clArgs.unwindingAssertions,
                     clArgs.unwindDepth).visit(p);
         }
+        // Remove all branching code, transforming the loop to predicated form.
         p = (Program) new PredicationVisitor().visit(p);
+        // Perform SSA renaming on the code so the code is in SSA form.
         p = (Program) new SSAVisitor().visit(p);
 
         // Output the program as text after being transformed (for debugging).
@@ -72,7 +78,8 @@ public class SRTool {
             return result;
         }
 
-        // TODO: Convert constraints to SMTLIB String.
+        // Parse the program, converting it into an SMT query that can be
+        // submitted to a solver.
         SMTLIBConverter converter = new SMTLIBConverter(ccv.variableNames,
                 ccv.transitionExprs, ccv.propertyExprs);
         String smtQuery = converter.getQuery();
@@ -90,9 +97,6 @@ public class SRTool {
             List<Integer> indexesFailed = converter
                     .getPropertiesThatFailed(queryResult);
 
-            // TODO: Use "indexesFailed" after implementing
-            // "getPropertiesThatFailed".
-            // For now:
             for (Integer assertFail : indexesFailed) {
                 result.add(new AssertionFailure(ccv.propertyNodes.get(
                         assertFail).getTokenInfo()));
