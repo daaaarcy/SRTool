@@ -57,13 +57,11 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
 				
 			case BinaryExpr.LAND:
 				logicop = true;
-                operator = "(and ("+ QueryUtil.ToLogic +" %s)"
-                		 + "(" + QueryUtil.ToLogic + " %s))";
+                operator = "(and "+ QueryUtil.tolog("%s") + QueryUtil.tolog("%s") + ")";
 				break;
 			case BinaryExpr.LOR:
 				logicop = true;
-                operator = "(or ("+ QueryUtil.ToLogic +" %s)"
-                		 + "(" + QueryUtil.ToLogic + " %s))";
+                operator = "(or" + QueryUtil.tolog("%s") + QueryUtil.tolog("%s") + ")";
 				break;
 			
 			case BinaryExpr.GEQ:
@@ -94,7 +92,7 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
 				throw new IllegalArgumentException("Invalid binary operator");
 		}
 		if(!assertStat && logicop){
-			operator = "(" + QueryUtil.tobv32 + operator + ")";
+			operator = QueryUtil.tobv32(operator);
 		}
 		assertStat = false;
 		return String.format(operator, visit(expr.getLhs()), visit(expr.getRhs()));
@@ -130,7 +128,7 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
 		String result = "(ite " + cond +
 				" " + trueExpr +
 				" " + falseExpr + ")"; 
-		return oldAssertStat? "("+ QueryUtil.ToLogic + " " + result +")" :result;
+		return oldAssertStat? QueryUtil.tolog(result) :result;
 	}
 
 	@Override
@@ -146,7 +144,7 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
 			break;
 		case UnaryExpr.LNOT:
 			if(!assertStat){
-				operator = "("+ QueryUtil.BVLNot +" %s)";
+				operator = QueryUtil.bvlnot(" %s");
 			}else{
 				operator = "(not %s)";
 			}
