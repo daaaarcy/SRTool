@@ -65,7 +65,7 @@ public class PredicationVisitor extends DefaultVisitor {
 		currentPredicate = freshQVar;
 		list[4] = (Stmt) visit(ifStmt.getThenStmt());
 		currentPredicate = freshRVar;
-		list[5] = (Stmt) visit(ifStmt.getThenStmt());
+		list[5] = (Stmt) visit(ifStmt.getElseStmt());
 		currentPredicate = savedCurrent;
 
 		return new BlockStmt(list, ifStmt);

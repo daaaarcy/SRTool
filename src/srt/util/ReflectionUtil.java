@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 
 public class ReflectionUtil {
 	
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	public static Class getNextSubclassDown(Object o, Class superclass)
 	{
 		Class next = o.getClass();
@@ -21,7 +21,7 @@ public class ReflectionUtil {
 		return null;
 	}
 	
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	public static Object callMethod(String name, Object instance, Class[] argTypes, Object[] args)
 	{
 		try {
