@@ -55,12 +55,12 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
 
         case BinaryExpr.LAND:
             logicop = true;
-            operator = "(and " + QueryUtil.tolog("%s") + QueryUtil.tolog("%s")
+            operator = "(and " + QueryUtil.tobool("%s") + QueryUtil.tobool("%s")
                     + ")";
             break;
         case BinaryExpr.LOR:
             logicop = true;
-            operator = "(or" + QueryUtil.tolog("%s") + QueryUtil.tolog("%s")
+            operator = "(or" + QueryUtil.tobool("%s") + QueryUtil.tobool("%s")
                     + ")";
             break;
 
@@ -113,7 +113,7 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
     @Override
     public String visit(IntLiteral intLiteral) {
         String result = "(_ bv" + intLiteral.getValue() + " 32)";
-        return assertStat ? QueryUtil.tolog(result) : result;
+        return assertStat ? QueryUtil.tobool(result) : result;
 
     }
 
@@ -126,7 +126,7 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
         String trueExpr = visit(ternaryExpr.getTrueExpr());
         String falseExpr = visit(ternaryExpr.getFalseExpr());
         String result = "(ite " + cond + " " + trueExpr + " " + falseExpr + ")";
-        return oldAssertStat ? QueryUtil.tolog(result) : result;
+        return oldAssertStat ? QueryUtil.tobool(result) : result;
     }
 
     @Override
@@ -149,7 +149,7 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
             throw new IllegalArgumentException("Invalid binary operator");
         }
         if (assertStat) {
-            operator = QueryUtil.tolog(operator);
+            operator = QueryUtil.tobool(operator);
         }
         assertStat = false;
         return String.format(operator, visit(unaryExpr.getOperand()));
