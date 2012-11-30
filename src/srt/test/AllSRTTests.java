@@ -24,17 +24,17 @@ public class AllSRTTests {
 		// bounded model checker tests
 		tests.addTest(getTestsInDir("test", clargs));
 		
-//		// unwinding-assertions=false tests
-//		// (comment out these lines while testing loop free programs)
-//		clargs = new CLArgs();
-//		clargs.unwindingAssertions = false;
-//		tests.addTest(getTestsInDir("testunsound", clargs));
-//		
-//		// loop abstraction tests
-//		// (comment out these lines while testing the bounded model checker)
-//		clargs = new CLArgs();
-//		clargs.abstractLoops = true;
-//		tests.addTest(getTestsInDir("testloopabs", clargs));
+		// unwinding-assertions=false tests
+		// (comment out these lines while testing loop free programs)
+		clargs = new CLArgs();
+		clargs.unwindingAssertions = false;
+		tests.addTest(getTestsInDir("testunsound", clargs));
+		
+		// loop abstraction tests
+		// (comment out these lines while testing the bounded model checker)
+		clargs = new CLArgs();
+		clargs.abstractLoops = true;
+		tests.addTest(getTestsInDir("testloopabs", clargs));
 
 		return tests;
 	}
