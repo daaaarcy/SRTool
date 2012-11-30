@@ -113,7 +113,11 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
 
 	@Override
 	public String visit(IntLiteral intLiteral) {
-		return "(_ bv" + intLiteral.getValue() + " 32)";
+		String result ="(_ bv" + intLiteral.getValue() + " 32)";
+		return assertStat?
+				QueryUtil.tolog(result):
+					result;
+				
 
 	}
 
@@ -143,17 +147,16 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
 			operator = "%s";
 			break;
 		case UnaryExpr.LNOT:
-			if(!assertStat){
-				operator = QueryUtil.bvlnot(" %s");
-			}else{
-				operator = "(not %s)";
-			}
+			operator = QueryUtil.bvlnot(" %s");
 			break;
 		case UnaryExpr.BNOT:
 			operator = "(bvnot %s)";
 			break;
 		default:
 			throw new IllegalArgumentException("Invalid binary operator");
+		}
+		if(assertStat){
+			operator = QueryUtil.tolog(operator);
 		}
 		assertStat = false;
 		return String.format(operator, visit(unaryExpr.getOperand()));
