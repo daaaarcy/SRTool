@@ -126,8 +126,7 @@ public class ExprToSmtlibVisitor extends DefaultVisitor {
     @Override
     public String visit(DeclRef declRef) {
         // reference for something thats been declared
-        return !boolRequired ? declRef.getName() : "(= " + declRef.getName()
-                + " " + TRUE + " )";
+        return !boolRequired ? declRef.getName() : tobool(declRef.getName());
     }
 
     @Override
