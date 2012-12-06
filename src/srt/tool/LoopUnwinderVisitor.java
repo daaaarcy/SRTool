@@ -5,46 +5,41 @@ import srt.ast.visitor.impl.DefaultVisitor;
 
 import java.util.ArrayList;
 
-public class LoopUnwinderVisitor extends DefaultVisitor
-{
+public class LoopUnwinderVisitor extends DefaultVisitor {
 
     private boolean unwindingAssertions;
     private int defaultUnwindBound;
 
     public LoopUnwinderVisitor(boolean unwindingAssertions,
-                               int defaultUnwindBound)
-    {
+                               int defaultUnwindBound) {
         super(true);
         this.unwindingAssertions = unwindingAssertions;
         this.defaultUnwindBound = defaultUnwindBound;
     }
 
     @Override
-    public Object visit(WhileStmt whileStmt)
-    {
+    public Object visit(WhileStmt whileStmt) {
         final IntLiteral bound = whileStmt.getBound();
         final Expr condition = whileStmt.getCondition();
         final Stmt body = whileStmt.getBody();
         final ExprList invList = whileStmt.getInvariantList();
 
-        final int unwindBound = bound != null ? bound.getValue()
-                : defaultUnwindBound;
+        final int unwindBound = bound != null ? bound.getValue() : defaultUnwindBound;
 
         ArrayList<Stmt> truncStmts = new ArrayList<Stmt>();
-        for (Expr inv : invList.getExprs())
-        {
+
+        // Check invariants at each loop entry.
+        for (Expr inv : invList.getExprs()) {
             truncStmts.add(new AssertStmt(inv));
         }
 
         // If no more unwinding is required, either assume or assert the negated
         // loop condition based on the global settings.
-        if (unwindBound == 0)
-        {
+        if (unwindBound == 0) {
 
             final UnaryExpr notCond = new UnaryExpr(UnaryExpr.LNOT, condition);
 
-            if (unwindingAssertions)
-            {
+            if (unwindingAssertions) {
                 truncStmts.add(new AssertStmt(notCond));
             }
 
