@@ -6,7 +6,8 @@ i=0;
 // make iterations positive, but otherwise unconstrained
 assume(iterations > 0);
 while(i < iterations)
-inv(i <= iterations)
+//nonsense invariant
+inv(1 == 2)
 {
 i = i + 1;
 }
